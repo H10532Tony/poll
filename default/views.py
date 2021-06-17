@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, RedirectView
+from django.views.generic import ListView, DetailView, RedirectView,CreateView,UpdateView,DeleteView
 from .models import Poll, Option
+from .models import *
+from django.urls import reverse
 
 # Create your views here.
 def poll_list(req):
@@ -25,3 +27,29 @@ class PollVote(RedirectView):
         op.count += 1
         op.save()
         return "/poll/{}/".format(op.poll_id)
+
+    class PollCreate(CreateView):
+        model = Poll
+        fields = ['subject','desc']    # 指定要顯示的欄位
+        #success_url = '/poll/'  # 成功新增後要導向的路徑
+        def get_success_url(self):
+
+            return "/poll/{}/".format(self.object.id)
+        template_name = 'general_form.html' # 要使用的頁面範本
+class PollDelete(DeleteView):
+    model = Poll
+    success_url = '/poll/'
+    template_name = "confirm_delete.html"
+class OptionUpdate(UpdateView):
+    model = Option
+    fields = ['title']
+    template_name = 'general_form.html'
+    # 修改成功後返回其所屬投票主題檢視頁面
+    def get_success_url(self):
+        return '/poll/'+str(self.object.poll_id)+'/'
+class OptionDelete(DeleteView):
+    model = Option
+    template_name = 'confirm_delete.html'
+    # 刪除成功後返回其所屬投票主題檢視頁面
+    def get_success_url(self):
+        return reverse('poll_view', kwargs={'pk': self.object.poll_id})

@@ -18,3 +18,16 @@
 {% block pagetitle %}
 檢視投票主題：{{ poll.subject }}
 {% endblock pagetitle %}
+
+<h1>{{ poll.subject }}</h1>
+<a href="/option/create/{{ poll.id }}">新增選項</a>
+<div>小提示！直接按選項文字就可以投票囉！</div>
+<ul>
+    {% for option in options %}
+    <li>
+        <a href="/option/{{ option.id }}/">{{ option.title }}</a> : {{ option.count }} 票 |
+        <a href="/option/{{ option.id }}/update/">修改</a> |
+        <a href="/option/{{ option.id }}/delete/">刪除</a>
+    </li>
+    {% endfor %}
+</ul>
